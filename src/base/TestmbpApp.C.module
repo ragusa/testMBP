@@ -1,0 +1,51 @@
+#include "TestmbpApp.h"
+#include "Moose.h"
+#include "AppFactory.h"
+
+template<>
+InputParameters validParams<TestmbpApp>()
+{
+  InputParameters params = validParams<MooseApp>();
+
+  params.set<bool>("use_legacy_uo_initialization") = false;
+  params.set<bool>("use_legacy_uo_aux_computation") = false;
+  return params;
+}
+
+TestmbpApp::TestmbpApp(const std::string & name, InputParameters parameters) :
+    MooseApp(name, parameters)
+{
+  srand(processor_id());
+
+  Moose::registerObjects(_factory);
+  TestmbpApp::registerObjects(_factory);
+
+  Moose::associateSyntax(_syntax, _action_factory);
+  TestmbpApp::associateSyntax(_syntax, _action_factory);
+}
+
+TestmbpApp::~TestmbpApp()
+{
+}
+
+// External entry point for dynamic application loading
+extern "C" void TestmbpApp__registerApps() { TestmbpApp::registerApps(); }
+void
+TestmbpApp::registerApps()
+{
+  registerApp(TestmbpApp);
+}
+
+// External entry point for dynamic object registration
+extern "C" void TestmbpApp__registerObjects(Factory & factory) { TestmbpApp::registerObjects(factory); }
+void
+TestmbpApp::registerObjects(Factory & factory)
+{
+}
+
+// External entry point for dynamic syntax association
+extern "C" void TestmbpApp__associateSyntax(Syntax & syntax, ActionFactory & action_factory) { TestmbpApp::associateSyntax(syntax, action_factory); }
+void
+TestmbpApp::associateSyntax(Syntax & syntax, ActionFactory & action_factory)
+{
+}
